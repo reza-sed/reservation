@@ -1,4 +1,5 @@
 const path = require("path");
+const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 
 module.exports = {
   mode: "development",
@@ -8,6 +9,15 @@ module.exports = {
     filename: "bundle.js",
     publicPath: "/",
   },
+  // plugins: [
+  //   // To strip all locales except “en”
+  //   new MomentLocalesPlugin(),
+
+  //   new MomentLocalesPlugin({
+  //     localesToKeep: ["fa"],
+  //   }),
+  // ],
+  devtool: "source-map",
   resolve: {
     extensions: [".js", ".jsx"],
   },
@@ -19,6 +29,10 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loader: "babel-loader",
+      },
+      {
+        test: /\.css$/,
+        loader: ["css-loader"],
       },
     ],
   },

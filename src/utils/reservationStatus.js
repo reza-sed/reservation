@@ -1,0 +1,5 @@
+export default {
+  ACCEPTED: `ACCEPTED`,
+  REQUESTED: `REQUESTED`,
+  CANCELED: `CANCELED`,
+};
