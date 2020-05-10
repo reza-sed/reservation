@@ -9,6 +9,7 @@ import {
   setState,
 } from "./actions/authenticationAction";
 import { URL } from "./../../utils/constants";
+import reservationStatus from "../../utils/reservationStatus";
 
 const getSession = (state) => state.session;
 
@@ -24,19 +25,9 @@ export function* reservationCreationSaga() {
     // reserveFromDate = new Date(reserveFromDate * 1000);
     // reserveToDate = new Date(reserveToDate * 1000);
     const id = uuidv1();
-    yield put(
-      createReservation(
-        roomId,
-        sectionName,
-        description,
-        reserveFromDate,
-        reserveToDate,
-        id
-      )
-    );
 
     const session = yield select(getSession);
-    const { res } = yield axios.post(`${URL}/reserve/new`, {
+    const res = yield axios.post(`${URL}/reserve/new`, {
       reservation: {
         id: id,
         sectionName: sectionName,
@@ -48,24 +39,40 @@ export function* reservationCreationSaga() {
       },
     });
 
-    console.log(res);
+    if (!res) {
+      return alert("بازه انتخاب شده قبلا رزرو شده است");
+    }
+
+    yield put(
+      createReservation(
+        roomId,
+        sectionName,
+        description,
+        new Date(reserveFromDate * 1000).toISOString(),
+        new Date(reserveToDate * 1000).toISOString(),
+        id
+      )
+    );
+
+    history.replace("/dashboard");
   }
 }
 
 export function* reservationModificationSaga() {
   while (true) {
-    const reservation = yield take([
+    const params = yield take([
       types.DELETE_RESERVATION,
       types.SET_RESERVATION_STATUS,
     ]);
 
-    const { res } = yield axios.put(`${URL}/reserve/update`, {
-      reservation: {
-        id: reservation.id,
-        status: reservation.status,
-        isDeleted: reservation.isDeleted,
-      },
-    });
+    let reservation = { id: params.reservationId };
+    if (params.status) {
+      reservation = { ...reservation, status: params.status };
+    } else {
+      reservation = { ...reservation, isDeleted: true };
+    }
+
+    const { res } = yield axios.put(`${URL}/reserve/update`, { reservation });
   }
 }
 

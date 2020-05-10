@@ -5,13 +5,10 @@ import ReserveList from "./ReserveList";
 export const Dashboard = ({ rooms }) => {
   return (
     <div>
-      <h1>لیست درخواست ها</h1>
-
-      <div>
-        {rooms.map((room) => (
-          <ReserveList key={room.id} room={room} />
-        ))}
-      </div>
+      <h4>لیست درخواست ها</h4>
+      {rooms.map((room) => (
+        <ReserveList key={room.id} room={room} />
+      ))}
     </div>
   );
 };

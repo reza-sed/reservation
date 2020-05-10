@@ -20,10 +20,12 @@ export default function reservationReducer(state = [], action) {
       return state;
     case types.SET_RESERVATION_STATUS:
       return state.map((r) => {
-        return r.id === action.id ? { ...r, status: action.status } : r;
+        return r.id == action.reservationId
+          ? { ...r, status: action.status }
+          : r;
       });
     case types.DELETE_RESERVATION:
-      return state.filter((r) => r.id !== action.id);
+      return state.filter((r) => r.id != action.reservationId);
     default:
       return state;
   }

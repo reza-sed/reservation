@@ -35,3 +35,11 @@ export function createReservation(
     id,
   };
 }
+
+export function modifyReservationStatus(reservationId, status) {
+  return { type: types.SET_RESERVATION_STATUS, reservationId, status };
+}
+
+export function deleteReservation(reservationId) {
+  return { type: types.DELETE_RESERVATION, reservationId };
+}

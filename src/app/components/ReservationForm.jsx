@@ -4,6 +4,7 @@ import { requestReservation } from "./../store/actions/reserveAction";
 import RoomSelect from "./RoomSelect";
 import { DateTimeRangePicker } from "react-advance-jalaali-datepicker";
 import { getActiveReservedDates } from "../../utils/reservationUtils";
+import { shamsiFromISoDate } from "../../utils/dateUtils";
 
 class ReservationForm extends Component {
   state = {};
@@ -12,14 +13,16 @@ class ReservationForm extends Component {
     let newState = { ...this.state };
     const { name, value } = e.target;
     newState[name] = value;
+
     this.setState(newState);
   };
 
   componentDidUpdate(_prevProps, prevState) {
     if (
-      (this.state.startDateTime &&
-        prevState.startDateTime !== this.state.startDateTime) ||
-      (this.state.room && prevState.room !== this.state.room)
+      this.state.startDateTime &&
+      this.state.room &&
+      (prevState.startDateTime !== this.state.startDateTime ||
+        prevState.room !== this.state.room)
     ) {
       getActiveReservedDates(this.state.startDateTime, this.state.room)
         .then((res) => {
@@ -36,9 +39,9 @@ class ReservationForm extends Component {
     let { newReserve } = this.props;
     return (
       <div>
-        <h1>رزرو سالن سمینار</h1>
         <div className="row">
           <div className="col-6">
+            <h4>رزرو سالن سمینار</h4>
             <form onSubmit={(e) => newReserve(e, this.state)}>
               <RoomSelect onSelect={this.handleChange} />
               <div className="form-group">
@@ -79,7 +82,25 @@ class ReservationForm extends Component {
               <input type="submit" value="ثبت" />
             </form>
           </div>
-          <div className="col-6"></div>
+          <div className="col-6">
+            <h4>لیست رزرو شده های روز</h4>
+            {this.state.activeReservedList &&
+              this.state.activeReservedList.map((r) => (
+                <div className="card border-primary mb-3" key={r.id}>
+                  <div className="card-body">
+                    <h5 className="card-title">{r.sectionName}</h5>
+                    <div className="row">
+                      <div className="col-6">
+                        <span>{shamsiFromISoDate(r.reserveFromDate)}</span>
+                      </div>
+                      <div className="col-6">
+                        <span>{shamsiFromISoDate(r.reserveToDate)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     );

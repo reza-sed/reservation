@@ -29,26 +29,49 @@ export const addNewReservation = async (reservation) => {
     status: reservationStatus.REQUESTED,
     isDeleted: false,
   };
-  await collection.insertOne(accReservation);
+
+  //check for overlapping
+  const data = await collection
+    .find({
+      reserveFromDate: { $lt: new Date(reserveToDate * 1000) },
+      reserveToDate: { $gt: new Date(reserveFromDate * 1000) },
+      isDeleted: false,
+      status: { $ne: reservationStatus.CANCELED },
+    })
+    .count();
+
+  if (data === 0) {
+    await collection.insertOne(accReservation);
+    return "done";
+  }
+  return null;
 };
 
 export const updateReservation = async (reservation) => {
-  let { id, status } = reservation;
+  let { id, status, isDeleted } = reservation;
   let db = await connectDB();
   let collection = db.collection("reservations");
 
   if (status) {
     await collection.updateOne(
       { id },
-      { $set: { status, finalizedDate: new Date() } }
+      { $set: { status, finalizedDate: new Date() } },
+      (err, documents) => {
+        console.log(err);
+        return documents;
+      }
     );
+  }
+
+  if (isDeleted) {
+    await collection.updateOne({ id }, { $set: { isDeleted } });
   }
 };
 
 app.post("/reserve/new", async (req, res) => {
   let rs = req.body.reservation;
-  await addNewReservation(rs);
-  res.status(200).send();
+  const response = await addNewReservation(rs);
+  res.status(200).send(response);
 });
 
 app.put("/reserve/update", async (req, res) => {
@@ -67,7 +90,11 @@ app.get("/checkdate", async (req, res) => {
     .collection("reservations")
     .find({
       roomId: roomid,
-      reserveFromDate: { $gt: md.getDate(), $lte: md.NPrevDate(-1) },
+      status: reservationStatus.ACCEPTED,
+      reserveFromDate: {
+        $gt: md.getJustDate(),
+        $lte: new Date(md.NPrevDate(-1)),
+      },
     })
     .toArray();
 

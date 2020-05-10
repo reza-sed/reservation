@@ -1,3 +1,5 @@
+import moment from "moment-jalaali";
+
 Number.prototype.pad = function (size) {
   var s = String(this);
   while (s.length < (size || 2)) {
@@ -19,11 +21,16 @@ export class MongoDate {
     return `${this.year.pad(4)}-${this.month.pad(2)}-${this.day.pad(2)}`;
   }
 
-  getDate() {
+  getJustDate() {
     return new Date(this.DateString);
   }
 
   NPrevDate(n) {
-    return this.date.setDate(this.date.getDate() - 1);
+    let ndate = this.getJustDate();
+    return new Date(ndate.setDate(ndate.getDate() - n));
   }
+}
+
+export function shamsiFromISoDate(date) {
+  return moment(date, "YYYY-MM-DDTHH:mm:ss.000Z").format("jYYYY/jM/jD HH:mm");
 }
