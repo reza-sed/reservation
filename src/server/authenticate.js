@@ -5,7 +5,7 @@ import { connectDB } from "./connect-db";
 const secret = "wlefehewhfiwehfidwqfweqfrw324324";
 const authenticationTokens = [];
 
-export const authenticationRoute = (app) => {
+export const authenticationRoute = app => {
   app.post("/authenticate", async (req, res) => {
     let encryptedInfperId = req.body.id;
     let infPerId = 0;
@@ -32,10 +32,17 @@ export const authenticationRoute = (app) => {
     } else {
       reservations = await db
         .collection("reservations")
-        .find({ isDeleted: false, infPerId })
+        .find({
+          isDeleted: false,
+          infPerId,
+          reserveFromDate: { $gte: new Date() },
+        })
         .toArray();
     }
-    let rooms = await db.collection("rooms").find().toArray();
+    let rooms = await db
+      .collection("rooms")
+      .find()
+      .toArray();
 
     let state = {
       reservations,

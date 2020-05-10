@@ -14,7 +14,7 @@ app.listen(port, console.log(`server listening on port ${port}`));
 app.use(cors(), bodyParser.urlencoded({ extended: true }), bodyParser.json());
 authenticationRoute(app);
 
-export const addNewReservation = async (reservation) => {
+export const addNewReservation = async reservation => {
   let db = await connectDB();
   let collection = db.collection("reservations");
 
@@ -47,7 +47,7 @@ export const addNewReservation = async (reservation) => {
   return null;
 };
 
-export const updateReservation = async (reservation) => {
+export const updateReservation = async reservation => {
   let { id, status, isDeleted } = reservation;
   let db = await connectDB();
   let collection = db.collection("reservations");
@@ -59,7 +59,7 @@ export const updateReservation = async (reservation) => {
       (err, documents) => {
         console.log(err);
         return documents;
-      }
+      },
     );
   }
 
