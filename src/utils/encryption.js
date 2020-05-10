@@ -1,4 +1,4 @@
-function encrypt(text, key) {
+export function encrypt(text, key) {
   var crypto = require("crypto");
   var alg = "des-ede-cbc";
   var key = new Buffer(key, "utf-8");
@@ -11,7 +11,7 @@ function encrypt(text, key) {
   return encoded;
 }
 
-function decrypt(encryptedText, key) {
+export function decrypt(encryptedText, key) {
   var crypto = require("crypto");
   var alg = "des-ede-cbc";
   var key = new Buffer(key, "utf-8");
