@@ -1,3 +1,5 @@
+import "../css/bootstrap.min.css";
+import "../css/index.css";
 import React, { Component } from "react";
 import { Provider } from "react-redux";
 import { store } from "./../store/index";
@@ -9,7 +11,7 @@ import Dashboard from "./Dashboard";
 import UnAuthorized from "./UnAuthorized";
 import Login from "./Login";
 
-const RouteGuard = (Component) => ({ match }) => {
+const RouteGuard = Component => ({ match }) => {
   console.info("Route Guard");
   if (!store.getState().session.authenticated) {
     return <Redirect to="/unauthorized" />;

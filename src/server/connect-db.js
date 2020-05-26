@@ -1,5 +1,7 @@
 import { MongoClient } from "mongodb";
-const url = `mongodb://localhost:27017/reservationdb`;
+import config from "config";
+
+const url = config.get("mongourl");
 let db = null;
 
 export async function connectDB() {

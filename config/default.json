@@ -1,0 +1,5 @@
+{
+  "name": "reservation",
+  "jwttoken": "app_jwt",
+  "mongourl": "mongodb://localhost:27017/reservationdb"
+}

@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Homa";
+  src: url("fonts/Homa.eot") format("eot"),
+    url("fonts/Homa.woff") format("woff"),
+    url("fonts/Homa.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+* {
+  font-family: Homa;
+  direction: rtl;
+}
+
+.active-navlink {
+  color: white;
+}

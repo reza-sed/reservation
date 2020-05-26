@@ -28,11 +28,16 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        loader: "babel-loader",
+        use: ["babel-loader"],
       },
       {
         test: /\.css$/,
-        loader: ["css-loader"],
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf)$/,
+        loader: "file-loader",
+        include: [/fonts/],
       },
     ],
   },

@@ -29,9 +29,9 @@ export default {
       name: "سالن پرنده های آبی",
     },
   ],
-  admins: [{ infPerId: 123, name: "مظلوم" }],
+  // admins: [{ infPerId: 123, name: "مظلوم" }],
   users: [
-    { infPerId: 123, name: "مظلوم" },
+    { infPerId: 123, name: "مظلوم", isAdmin: true },
     { infPerId: 124, name: "علی اکبری" },
   ],
 };
