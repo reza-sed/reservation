@@ -1,13 +1,14 @@
 import express from "express";
-import { connectDB } from "../server/connect-db";
-import reservationStatus from "../utils/reservationStatus";
-import { MongoDate } from "../utils/dateUtils";
+import { connectDB } from "./../connect-db";
+import reservationStatus from "./../../utils/reservationStatus";
+import { MongoDate } from "./../../utils/dateUtils";
 import auth from "../middleware/auth";
 import Joi from "@hapi/joi";
+import winston from "winston";
 
 const router = express.Router();
 
-export const addNewReservation = async reservation => {
+export const addNewReservation = async (reservation) => {
   let db = await connectDB();
   let collection = db.collection("reservations");
 
@@ -37,12 +38,12 @@ export const addNewReservation = async reservation => {
 
   if (data === 0) {
     await collection.insertOne(accReservation);
-    return "done";
+    return "added";
   }
   return null;
 };
 
-export const updateReservation = async reservation => {
+export const updateReservation = async (reservation) => {
   let { id, status, isDeleted } = reservation;
   let db = await connectDB();
   let collection = db.collection("reservations");
@@ -52,9 +53,9 @@ export const updateReservation = async reservation => {
       { id },
       { $set: { status, finalizedDate: new Date() } },
       (err, documents) => {
-        console.log(err);
+        winston.error(err);
         return documents;
-      },
+      }
     );
   }
 
@@ -72,7 +73,7 @@ router.post("/new", auth, async (req, res) => {
 router.put("/update", auth, async (req, res) => {
   let rs = req.body.reservation;
   await updateReservation(rs);
-  res.status(200).send("ok");
+  res.status(200).send("done");
 });
 
 router.get("/checkdate", auth, async (req, res) => {

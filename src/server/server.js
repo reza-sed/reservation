@@ -4,9 +4,9 @@ import logger from "./../utils/logger";
 import cors from "cors";
 import bodyParser from "body-parser";
 import config from "config";
-import authenticate from "../routes/authenticate";
-import reservations from "../routes/reservations";
-import error from "../middleware/error";
+import authenticate from "./routes/authenticate";
+import reservations from "./routes/reservations";
+import error from "./middleware/error";
 import winston from "winston";
 
 logger();

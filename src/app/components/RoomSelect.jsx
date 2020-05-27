@@ -11,7 +11,7 @@ const RoomSelect = ({ rooms, onSelect }) => {
         name="room"
         id="sel1"
       >
-        <option value={0}>اتاق جلسات مورد نظر را انتخاب نمایید</option>
+        <option>اتاق جلسات مورد نظر را انتخاب نمایید</option>
         {rooms.map((room) => {
           return (
             <option key={room.id} value={room.id}>

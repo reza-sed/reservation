@@ -3,46 +3,124 @@ import { connect } from "react-redux";
 import { requestReservation } from "./../store/actions/reserveAction";
 import RoomSelect from "./RoomSelect";
 import { DateTimeRangePicker } from "react-advance-jalaali-datepicker";
-import { getActiveReservedDates } from "../../utils/reservationUtils";
 import { shamsiFromISoDate } from "../../utils/dateUtils";
+import { checkReservationDate } from "../service/reservationService";
+import { toast } from "react-toastify";
+import Joi from "@hapi/joi";
+import produce from "immer";
 
 class ReservationForm extends Component {
-  state = {};
+  state = {
+    data: {
+      room: "",
+      startDateTime: "",
+      endDateTime: "",
+      section: "",
+      desc: "",
+    },
+    errors: {},
+  };
+
+  schema = Joi.object({
+    room: Joi.number().required().messages({
+      "number.required": "انتخاب اتاق الزامی است",
+      "number.base": "انتخاب اتاق الزامی است",
+    }),
+    section: Joi.string().required().messages({
+      "string.required": "انتخاب قسمت کاری محوله الزامی است",
+      "string.empty": "انتخاب قسمت کاری محوله الزامی است",
+    }),
+    startDateTime: Joi.number().required().messages({
+      "number.required": "انتخاب تاریخ ابتدا الزامی است",
+      "number.base": "انتخاب تاریخ ابتدا الزامی است",
+    }),
+    endDateTime: Joi.number().required().messages({
+      "number.required": "انتخاب تاریخ انتها الزامی است",
+      "number.base": "انتخاب تاریخ انتها الزامی است",
+    }),
+    desc: Joi.string().alphanum().allow("").messages({
+      "string.alphanum": "توضیحات فقط شامل کاراکترهای اعداد و حروف باشد",
+    }),
+  }).unknown(true);
+
+  validateProperty = (name, value) => {
+    const obj = { [name]: value };
+    return this.schema.validate(obj, { allowUnknown: true });
+  };
 
   handleChange = (e) => {
-    let newState = { ...this.state };
     const { name, value } = e.target;
-    newState[name] = value;
+
+    const { error } = this.validateProperty(name, value);
+
+    const newState = produce(this.state, (draftState) => {
+      if (error) {
+        draftState.errors[name] = error.details[0].message;
+      } else {
+        delete draftState.errors[name];
+        draftState.data[name] = value;
+      }
+    });
 
     this.setState(newState);
   };
 
+  validate = () => {
+    const { error } = this.schema.validate(this.state.data, {
+      abortEarly: false,
+    });
+    if (!error) return true;
+    console.log(error.details);
+
+    const errors = {};
+    for (let item of error.details) errors[item.path[0]] = item.message;
+    this.setState({ errors });
+  };
+
+  submit = (e) => {
+    e.preventDefault();
+    const { room, startDateTime, endDateTime, desc, section } = this.state.data;
+
+    this.validate() &&
+      this.props.newReserve(room, section, desc, startDateTime, endDateTime);
+  };
+
   componentDidUpdate(_prevProps, prevState) {
     if (
-      this.state.startDateTime &&
-      this.state.room &&
-      (prevState.startDateTime !== this.state.startDateTime ||
-        prevState.room !== this.state.room)
+      this.state.data.startDateTime &&
+      this.state.data.room &&
+      (prevState.startDateTime !== this.state.data.startDateTime ||
+        prevState.room !== this.state.data.room)
     ) {
-      getActiveReservedDates(this.state.startDateTime, this.state.room)
+      checkReservationDate(this.state.data.startDateTime, this.state.data.room)
         .then((res) => {
           this.setState({ activeReservedList: res });
         })
         .catch((e) => {
-          // alert("عدم امکان ارتباط با سرور");
-          console.log(e);
+          toast.error(e);
         });
     }
   }
 
   render() {
-    let { newReserve } = this.props;
+    let { errors } = this.state;
+    console.log(errors);
+
     return (
       <div>
         <div className="row">
           <div className="col-6">
+            {Object.keys(errors).length !== 0 && (
+              <div className="alert alert-danger">
+                <ul>
+                  {Object.keys(errors).map((prop) => (
+                    <li key={prop}>{errors[prop]}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <h4>رزرو سالن سمینار</h4>
-            <form onSubmit={(e) => newReserve(e, this.state)}>
+            <form onSubmit={this.submit}>
               <RoomSelect onSelect={this.handleChange} />
               <div className="form-group">
                 <DateTimeRangePicker
@@ -50,10 +128,18 @@ class ReservationForm extends Component {
                   placeholderEnd="تاریخ و ساعت پایان"
                   format="jYYYY/jMM/jDD HH:mm"
                   onChangeStart={(unix) => {
-                    this.setState({ startDateTime: unix });
+                    const event = new CustomEvent("build", {
+                      target: { name: "startDateTime", value: unix },
+                    });
+                    this.handleChange(event);
+                    // this.setState({ startDateTime: unix });
                   }}
                   onChangeEnd={(unix) => {
-                    this.setState({ endDateTime: unix });
+                    const event = new CustomEvent("build", {
+                      target: { name: "endDateTime", value: unix },
+                    });
+                    this.handleChange(event);
+                    //this.setState({ endDateTime: unix });
                   }}
                   idStart="rangePickerStart"
                   idEnd="rangePickerEnd"
@@ -79,7 +165,7 @@ class ReservationForm extends Component {
                   onChange={this.handleChange}
                 ></textarea>
               </div>
-              <input type="submit" value="ثبت" />
+              <input className="btn btn-primary" type="submit" value="ثبت" />
             </form>
           </div>
           <div className="col-6">
@@ -109,9 +195,7 @@ class ReservationForm extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    newReserve(e, localState) {
-      e.preventDefault();
-      const { room, startDateTime, endDateTime, desc, section } = localState;
+    newReserve(room, section, desc, startDateTime, endDateTime) {
       dispatch(
         requestReservation(room, section, desc, startDateTime, endDateTime)
       );

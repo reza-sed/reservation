@@ -9,14 +9,6 @@ module.exports = {
     filename: "bundle.js",
     publicPath: "/",
   },
-  // plugins: [
-  //   // To strip all locales except “en”
-  //   new MomentLocalesPlugin(),
-
-  //   new MomentLocalesPlugin({
-  //     localesToKeep: ["fa"],
-  //   }),
-  // ],
   devtool: "source-map",
   resolve: {
     extensions: [".js", ".jsx"],

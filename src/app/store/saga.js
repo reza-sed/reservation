@@ -8,8 +8,12 @@ import {
   processAuthenticateUser,
   setState,
 } from "./actions/authenticationAction";
-import { URL } from "./../../utils/constants";
-import reservationStatus from "../../utils/reservationStatus";
+import { authenticateUser } from "../service/authenticateService";
+import { toast } from "react-toastify";
+import {
+  addReservation,
+  updateReservation,
+} from "./../service/reservationService";
 
 const getSession = (state) => state.session;
 
@@ -27,20 +31,18 @@ export function* reservationCreationSaga() {
     const id = uuidv1();
 
     const session = yield select(getSession);
-    const res = yield axios.post(`${URL}/reserve/new`, {
-      reservation: {
-        id: id,
-        sectionName: sectionName,
-        description: description,
-        reserveFromDate: reserveFromDate,
-        reserveToDate: reserveToDate,
-        roomId: roomId,
-        infPerId: session.id,
-      },
+    const res = yield addReservation({
+      id: id,
+      sectionName: sectionName,
+      description: description,
+      reserveFromDate: reserveFromDate,
+      reserveToDate: reserveToDate,
+      roomId: roomId,
+      //infPerId: session.id,
     });
 
     if (!res) {
-      return alert("بازه انتخاب شده قبلا رزرو شده است");
+      return toast.info("بازه انتخاب شده قبلا رزرو شده است");
     }
 
     yield put(
@@ -72,7 +74,8 @@ export function* reservationModificationSaga() {
       reservation = { ...reservation, isDeleted: true };
     }
 
-    const { res } = yield axios.put(`${URL}/reserve/update`, { reservation });
+    const res = yield updateReservation(reservation);
+    if (res) toast.info(res);
   }
 }
 
@@ -80,9 +83,9 @@ export function* userAuhtenticationSaga() {
   while (true) {
     const { key } = yield take(types.REQUEST_AUTHENTICATE_USER);
     try {
-      const { data } = yield axios.post(`${URL}/authenticate`, { id: key });
+      const { data } = yield authenticateUser(key);
       if (!data) {
-        throw new Error("unable to establish connection");
+        toast.error("پاسخی از سمت سرور در یافت نشد.");
       }
 
       yield put(setState(data.state));
@@ -93,7 +96,7 @@ export function* userAuhtenticationSaga() {
       history.push("/dashboard");
     } catch (e) {
       yield put(processAuthenticateUser(types.NOT_AUTHENTICATED));
-      console.log("cannot authenticate", e);
+      toast.error("could not authenticate", e);
     }
   }
 }

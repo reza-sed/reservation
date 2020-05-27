@@ -1,6 +1,6 @@
 import express from "express";
-import { generateToken } from "./../utils/token";
-import { connectDB } from "../server/connect-db";
+import { generateToken } from "../../utils/token";
+import { connectDB } from "./../connect-db";
 
 const router = express.Router();
 
@@ -31,22 +31,20 @@ router.post("/", async (req, res) => {
       .toArray();
   }
 
-  let rooms = await db
-    .collection("rooms")
-    .find()
-    .toArray();
+  let rooms = await db.collection("rooms").find().toArray();
 
   let state = {
     reservations,
     rooms,
     session: {
+      jwtToken,
       isAdmin: user.isAdmin || false,
-      id: infPerId,
+      //      id: infPerId,
       authenticated: `AUTHENTICATED`,
     },
   };
 
-  res.status(200).send({ token, state });
+  res.status(200).send({ state });
 });
 
 export default router;
