@@ -10,3 +10,7 @@ export function getJWT() {
   const state = store.getState();
   return state.session && state.session.token;
 }
+
+export function setHeader() {
+  axiosWrapper.setJWT(getJWT());
+}

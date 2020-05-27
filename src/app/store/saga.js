@@ -8,14 +8,14 @@ import {
   processAuthenticateUser,
   setState,
 } from "./actions/authenticationAction";
-import { authenticateUser } from "../service/authenticateService";
+import { authenticateUser, setHeader } from "../service/authenticateService";
 import { toast } from "react-toastify";
 import {
   addReservation,
   updateReservation,
 } from "./../service/reservationService";
 
-const getSession = (state) => state.session;
+const getSession = state => state.session;
 
 export function* reservationCreationSaga() {
   while (true) {
@@ -52,8 +52,8 @@ export function* reservationCreationSaga() {
         description,
         new Date(reserveFromDate * 1000).toISOString(),
         new Date(reserveToDate * 1000).toISOString(),
-        id
-      )
+        id,
+      ),
     );
 
     history.replace("/dashboard");
@@ -90,8 +90,9 @@ export function* userAuhtenticationSaga() {
 
       yield put(setState(data.state));
       yield put(
-        processAuthenticateUser(types.AUTHENTICATED, data.state.session)
+        processAuthenticateUser(types.AUTHENTICATED, data.state.session),
       );
+      setHeader();
 
       history.push("/dashboard");
     } catch (e) {

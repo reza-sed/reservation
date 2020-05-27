@@ -31,13 +31,16 @@ router.post("/", async (req, res) => {
       .toArray();
   }
 
-  let rooms = await db.collection("rooms").find().toArray();
+  let rooms = await db
+    .collection("rooms")
+    .find()
+    .toArray();
 
   let state = {
     reservations,
     rooms,
     session: {
-      jwtToken,
+      token,
       isAdmin: user.isAdmin || false,
       //      id: infPerId,
       authenticated: `AUTHENTICATED`,

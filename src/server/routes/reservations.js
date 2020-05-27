@@ -8,11 +8,12 @@ import winston from "winston";
 
 const router = express.Router();
 
-export const addNewReservation = async (reservation) => {
+export const addNewReservation = async reservation => {
   let db = await connectDB();
   let collection = db.collection("reservations");
 
-  if (!validate(reservation)) return res.status(400).send();
+  if (!validate(reservation))
+    return res.status(400).send("داده های خود را چک کرده و دوباره ارسال کنید");
 
   // convert unix epochs to timestamps
   const { reserveFromDate, reserveToDate } = reservation;
@@ -27,7 +28,7 @@ export const addNewReservation = async (reservation) => {
   };
 
   //check for overlroutering
-  const data = await collection
+  const dataCount = await collection
     .find({
       reserveFromDate: { $lt: new Date(reserveToDate * 1000) },
       reserveToDate: { $gt: new Date(reserveFromDate * 1000) },
@@ -36,14 +37,14 @@ export const addNewReservation = async (reservation) => {
     })
     .count();
 
-  if (data === 0) {
+  if (dataCount === 0) {
     await collection.insertOne(accReservation);
     return "added";
   }
   return null;
 };
 
-export const updateReservation = async (reservation) => {
+export const updateReservation = async reservation => {
   let { id, status, isDeleted } = reservation;
   let db = await connectDB();
   let collection = db.collection("reservations");
@@ -55,7 +56,7 @@ export const updateReservation = async (reservation) => {
       (err, documents) => {
         winston.error(err);
         return documents;
-      }
+      },
     );
   }
 
@@ -101,12 +102,14 @@ function validate(r) {
   const schema = Joi.object({
     roomId: Joi.number().required(),
     sectionName: Joi.string().required(),
-    infPerId: Joi.number().required(),
+    //infPerId: Joi.number().required(),
     reserveFromDate: Joi.number().required(),
     reserveToDate: Joi.number().required(),
   });
 
-  return schema.validate(r);
+  const { error } = schema.validate(r);
+
+  return error.details.length === 0;
 }
 
 export default router;
