@@ -22,36 +22,23 @@ class ReservationForm extends Component {
   };
 
   schema = Joi.object({
-    room: Joi.number()
-      .required()
-      .messages({
-        "any.required": "انتخاب سالن سمینار الزامی است",
-        "number.base": "انتخاب سالن سمینار الزامی است",
-      }),
-    section: Joi.string()
-      .required()
-      .messages({
-        "any.required": "انتخاب قسمت کاری محوله الزامی است",
-        "string.empty": "انتخاب قسمت کاری محوله الزامی است",
-      }),
-    startDateTime: Joi.number()
-      .required()
-      .messages({
-        "any.required": "انتخاب تاریخ ابتدا الزامی است",
-        "number.base": "انتخاب تاریخ ابتدا الزامی است",
-      }),
-    endDateTime: Joi.number()
-      .required()
-      .messages({
-        "any.required": "انتخاب تاریخ انتها الزامی است",
-        "number.base": "انتخاب تاریخ انتها الزامی است",
-      }),
-    desc: Joi.string()
-      .alphanum()
-      .allow("")
-      .messages({
-        "string.alphanum": "توضیحات فقط شامل کاراکترهای اعداد و حروف باشد",
-      }),
+    room: Joi.number().required().messages({
+      "any.required": "انتخاب سالن سمینار الزامی است",
+      "number.base": "انتخاب سالن سمینار الزامی است",
+    }),
+    section: Joi.string().required().messages({
+      "any.required": "انتخاب قسمت کاری محوله الزامی است",
+      "string.empty": "انتخاب قسمت کاری محوله الزامی است",
+    }),
+    startDateTime: Joi.number().required().messages({
+      "any.required": "انتخاب تاریخ ابتدا الزامی است",
+      "number.base": "انتخاب تاریخ ابتدا الزامی است",
+    }),
+    endDateTime: Joi.number().required().messages({
+      "any.required": "انتخاب تاریخ انتها الزامی است",
+      "number.base": "انتخاب تاریخ انتها الزامی است",
+    }),
+    desc: Joi.string().allow(""),
   }).unknown(true);
 
   validateProperty = (name, value) => {
@@ -62,12 +49,12 @@ class ReservationForm extends Component {
     });
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     const { name, value } = e.target;
 
     //const { error } = this.validateProperty(name, value);
 
-    const newState = produce(this.state, draftState => {
+    const newState = produce(this.state, (draftState) => {
       // if (error) {
       //   draftState.errors[name] = error.details[0].message;
       // } else {
@@ -90,7 +77,7 @@ class ReservationForm extends Component {
     this.setState({ errors });
   };
 
-  submit = e => {
+  submit = (e) => {
     e.preventDefault();
     const { room, startDateTime, endDateTime, desc, section } = this.state.data;
 
@@ -106,10 +93,10 @@ class ReservationForm extends Component {
         prevState.data.room !== this.state.data.room)
     ) {
       checkReservationDate(this.state.data.startDateTime, this.state.data.room)
-        .then(res => {
+        .then((res) => {
           this.setState({ activeReservedList: res });
         })
-        .catch(e => {
+        .catch((e) => {
           toast.error(e);
         });
     }
@@ -124,7 +111,7 @@ class ReservationForm extends Component {
             {Object.keys(errors).length !== 0 && (
               <div className="alert alert-danger">
                 <ul>
-                  {Object.keys(errors).map(prop => (
+                  {Object.keys(errors).map((prop) => (
                     <li key={prop}>{errors[prop]}</li>
                   ))}
                 </ul>
@@ -138,12 +125,12 @@ class ReservationForm extends Component {
                   placeholderStart="تاریخ و ساعت شروع"
                   placeholderEnd="تاریخ و ساعت پایان"
                   format="jYYYY/jMM/jDD HH:mm"
-                  onChangeStart={unix => {
+                  onChangeStart={(unix) => {
                     this.handleChange({
                       target: { name: "startDateTime", value: unix },
                     });
                   }}
-                  onChangeEnd={unix => {
+                  onChangeEnd={(unix) => {
                     this.handleChange({
                       target: { name: "endDateTime", value: unix },
                     });
@@ -178,7 +165,7 @@ class ReservationForm extends Component {
           <div className="col-6">
             <h4>لیست رزرو شده های روز</h4>
             {this.state.activeReservedList &&
-              this.state.activeReservedList.map(r => (
+              this.state.activeReservedList.map((r) => (
                 <div className="card border-primary mb-3" key={r.id}>
                   <div className="card-body">
                     <h5 className="card-title">{r.sectionName}</h5>
@@ -200,14 +187,14 @@ class ReservationForm extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     newReserve(room, section, desc, startDateTime, endDateTime) {
       dispatch(
-        requestReservation(room, section, desc, startDateTime, endDateTime),
+        requestReservation(room, section, desc, startDateTime, endDateTime)
       );
     },
   };
 };
 
-export default connect(state => state, mapDispatchToProps)(ReservationForm);
+export default connect((state) => state, mapDispatchToProps)(ReservationForm);

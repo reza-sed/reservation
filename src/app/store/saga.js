@@ -15,7 +15,7 @@ import {
   updateReservation,
 } from "./../service/reservationService";
 
-const getSession = state => state.session;
+const getSession = (state) => state.session;
 
 export function* reservationCreationSaga() {
   while (true) {
@@ -30,33 +30,35 @@ export function* reservationCreationSaga() {
     // reserveToDate = new Date(reserveToDate * 1000);
     const id = uuidv1();
 
-    const session = yield select(getSession);
-    const res = yield addReservation({
-      id: id,
-      sectionName: sectionName,
-      description: description,
-      reserveFromDate: reserveFromDate,
-      reserveToDate: reserveToDate,
-      roomId: roomId,
-      //infPerId: session.id,
-    });
+    try {
+      const res = yield addReservation({
+        reservation: {
+          // id: id,
+          sectionName: sectionName,
+          description: description,
+          reserveFromDate: reserveFromDate,
+          reserveToDate: reserveToDate,
+          roomId: roomId,
+        },
+      });
+      if (!res) {
+        return toast.warn("بازه انتخاب شده قبلا رزرو شده است");
+      }
+      yield put(
+        createReservation(
+          roomId,
+          sectionName,
+          description,
+          new Date(reserveFromDate * 1000).toISOString(),
+          new Date(reserveToDate * 1000).toISOString(),
+          id
+        )
+      );
 
-    if (!res) {
-      return toast.info("بازه انتخاب شده قبلا رزرو شده است");
+      history.replace("/dashboard");
+    } catch (error) {
+      toast.error(error.response.data);
     }
-
-    yield put(
-      createReservation(
-        roomId,
-        sectionName,
-        description,
-        new Date(reserveFromDate * 1000).toISOString(),
-        new Date(reserveToDate * 1000).toISOString(),
-        id,
-      ),
-    );
-
-    history.replace("/dashboard");
   }
 }
 
@@ -74,7 +76,7 @@ export function* reservationModificationSaga() {
       reservation = { ...reservation, isDeleted: true };
     }
 
-    const res = yield updateReservation(reservation);
+    const res = yield updateReservation({ reservation });
     if (res) toast.info(res);
   }
 }
@@ -90,14 +92,14 @@ export function* userAuhtenticationSaga() {
 
       yield put(setState(data.state));
       yield put(
-        processAuthenticateUser(types.AUTHENTICATED, data.state.session),
+        processAuthenticateUser(types.AUTHENTICATED, data.state.session)
       );
       setHeader();
 
       history.push("/dashboard");
     } catch (e) {
       yield put(processAuthenticateUser(types.NOT_AUTHENTICATED));
-      toast.error("could not authenticate", e);
+      toast.error("عدم امکان اعتبار سنجی در سرور", e);
     }
   }
 }

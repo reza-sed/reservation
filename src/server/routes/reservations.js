@@ -8,12 +8,9 @@ import winston from "winston";
 
 const router = express.Router();
 
-export const addNewReservation = async reservation => {
+export const addNewReservation = async (reservation) => {
   let db = await connectDB();
   let collection = db.collection("reservations");
-
-  if (!validate(reservation))
-    return res.status(400).send("داده های خود را چک کرده و دوباره ارسال کنید");
 
   // convert unix epochs to timestamps
   const { reserveFromDate, reserveToDate } = reservation;
@@ -44,7 +41,7 @@ export const addNewReservation = async reservation => {
   return null;
 };
 
-export const updateReservation = async reservation => {
+export const updateReservation = async (reservation) => {
   let { id, status, isDeleted } = reservation;
   let db = await connectDB();
   let collection = db.collection("reservations");
@@ -54,9 +51,8 @@ export const updateReservation = async reservation => {
       { id },
       { $set: { status, finalizedDate: new Date() } },
       (err, documents) => {
-        winston.error(err);
         return documents;
-      },
+      }
     );
   }
 
@@ -67,6 +63,10 @@ export const updateReservation = async reservation => {
 
 router.post("/new", auth, async (req, res) => {
   let rs = req.body.reservation;
+  if (!validate(rs))
+    return res.status(400).send("داده های خود را چک کرده و دوباره ارسال کنید");
+
+  rs = { ...rs, infPerId: req.user.infPerId };
   const response = await addNewReservation(rs);
   res.status(200).send(response);
 });
@@ -100,16 +100,18 @@ router.get("/checkdate", auth, async (req, res) => {
 
 function validate(r) {
   const schema = Joi.object({
+    id: Joi.string().required(),
     roomId: Joi.number().required(),
     sectionName: Joi.string().required(),
     //infPerId: Joi.number().required(),
+    description: Joi.string().allow(""),
     reserveFromDate: Joi.number().required(),
     reserveToDate: Joi.number().required(),
   });
 
   const { error } = schema.validate(r);
 
-  return error.details.length === 0;
+  return error === undefined;
 }
 
 export default router;
