@@ -2,6 +2,8 @@
   "name": "reservation",
   "jwttoken": "app_jwt",
   "mongourl": "mongodb://localhost:27017/reservationdb",
+  "dbuser": "app_db_user",
+  "dbpass": "app_db_pass",
   "client": {
     "remoteApi": "http://localhost:7777"
   }

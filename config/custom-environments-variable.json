@@ -1,3 +1,5 @@
 {
-  "app_jwt": "APP_JWT_SECRET"
+  "app_jwt": "APP_JWT_SECRET",
+  "app_db_user": "APP_MONGO_USER",
+  "app_db_pass": "APP_MONGO_PASS"
 }
