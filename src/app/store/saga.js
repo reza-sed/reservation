@@ -1,6 +1,5 @@
 import { take, put, select } from "redux-saga/effects";
 import { v1 as uuidv1 } from "uuid";
-import axios from "axios";
 import { history } from "./history";
 import * as types from "../store/actions/actionTypes";
 import { createReservation } from "./actions/reserveAction";
@@ -15,7 +14,7 @@ import {
   updateReservation,
 } from "./../service/reservationService";
 
-const getSession = (state) => state.session;
+// const getSession = (state) => state.session;
 
 export function* reservationCreationSaga() {
   while (true) {
@@ -51,8 +50,8 @@ export function* reservationCreationSaga() {
           description,
           new Date(reserveFromDate * 1000).toISOString(),
           new Date(reserveToDate * 1000).toISOString(),
-          id
-        )
+          id,
+        ),
       );
 
       history.replace("/dashboard");
@@ -92,7 +91,7 @@ export function* userAuhtenticationSaga() {
 
       yield put(setState(data.state));
       yield put(
-        processAuthenticateUser(types.AUTHENTICATED, data.state.session)
+        processAuthenticateUser(types.AUTHENTICATED, data.state.session),
       );
       setHeader();
 

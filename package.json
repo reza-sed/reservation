@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack",
+    "build": "webpack -p",
+    "start": "cross-env NODE_ENV=production && npm run server",
     "dev": "webpack-dev-server --open",
     "test-connect": "babel-node src/server/connect-db",
     "initialize": "babel-node src/server/initialize-db",
-    "server": "babel-node src/server/server --inspect",
+    "server": "babel-node src/server/server",
     "test-server": "babel-node src/server/server.test",
     "start-dev": "concurrently \"npm run dev\" \"npm run server\""
   },
@@ -45,9 +45,11 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "axios": "^0.18.0",
+    "compression": "^1.7.4",
     "config": "^3.3.1",
     "crypto": "^1.0.1",
     "express-async-errors": "^3.1.1",
+    "helmet": "^3.22.0",
     "history": "^4.7.2",
     "immer": "^6.0.8",
     "jsonwebtoken": "^8.5.1",
