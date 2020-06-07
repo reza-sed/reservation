@@ -28,7 +28,7 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-let port = process.env.PORT || 8080;
+let port = process.env.PORT || 7777;
 
 app.use(helmet());
 app.use(compression());
