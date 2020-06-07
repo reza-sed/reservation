@@ -19,8 +19,7 @@ function setJWT(jwt) {
   axios.defaults.headers.common["x-auth-token"] = jwt;
 }
 
-axios.defaults.baseURL =
-  process.env.NODE_ENV == "production" ? "" : client.remoteApi;
+axios.defaults.baseURL = client.remoteApi;
 
 export default {
   get: axios.get,

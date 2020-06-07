@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack -p",
-    "start": "cross-env NODE_ENV=production && npm run server",
+    "start": "cross-env NODE_ENV=production npm run server",
     "dev": "webpack-dev-server --open",
     "test-connect": "babel-node src/server/connect-db",
     "initialize": "babel-node src/server/initialize-db",

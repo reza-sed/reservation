@@ -30,7 +30,7 @@ class Main extends Component {
               <Switch>
                 <Route path="/login" component={Login} />
                 <Route path="/dashboard" render={RouteGuard(Dashboard)} />
-                <Route path="/reserve" render={() => <ReservationForm />} />
+                <Route path="/reserve" render={RouteGuard(ReservationForm)} />
                 <Route path="/unauthorized" render={UnAuthorized} />
               </Switch>
             </div>

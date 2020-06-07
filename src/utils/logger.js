@@ -1,6 +1,6 @@
 import winston, { format } from "winston";
 
-export default function() {
+export default function () {
   winston.exceptions.handle(
     new winston.transports.File({
       filename: "uncaughtExceptions.log",
@@ -8,7 +8,7 @@ export default function() {
     }),
   );
 
-  process.on("unhandledRejection", ex => {
+  process.on("unhandledRejection", (ex) => {
     throw ex;
   });
 
