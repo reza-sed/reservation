@@ -1,4 +1,4 @@
-import reservationStatus from "../utils/reservationStatus";
+import reservationStatus from "./utils/reservationStatus";
 
 export default {
   // session: {

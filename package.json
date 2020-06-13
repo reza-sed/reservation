@@ -5,13 +5,20 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack -p",
+    "build-server": "babel src/server/ --out-dir dist-server",
     "start": "cross-env NODE_ENV=production npm run server",
     "dev": "webpack-dev-server --open",
     "test-connect": "babel-node src/server/connect-db",
     "initialize": "babel-node src/server/initialize-db",
-    "server": "babel-node src/server/server",
+    "server": "pm2 start dist-server/server.js",
+    "servernopm2": "babel-node src/server/server",
     "test-server": "babel-node src/server/server.test",
-    "start-dev": "concurrently \"npm run dev\" \"npm run server\""
+    "start-dev": "concurrently \"npm run dev\" \"npm run server\"",
+    "pm2-list": "pm2 list",
+    "pm2-delete": "pm2 delete server",
+    "pm2-restart": "pm2 restart server --update-env",
+    "pm2-logs": "pm2 logs",
+    "pm2-monit": "pm2 monit"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +50,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "@babel/cli": "^7.10.1",
     "@hapi/joi": "^17.1.1",
     "axios": "^0.18.0",
     "compression": "^1.7.4",
@@ -55,6 +63,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "nod3des": "0.0.3",
+    "pm2": "^4.4.0",
     "query-string": "^6.12.1",
     "react": "^16.4.2",
     "react-advance-jalaali-datepicker": "^1.2.2",
@@ -67,6 +76,7 @@
     "redux-logger": "^3.0.6",
     "redux-saga": "^0.16.2",
     "redux-thunk": "^2.3.0",
+    "rimraf": "^3.0.2",
     "uuid": "^7.0.3",
     "winston": "^3.2.1"
   }

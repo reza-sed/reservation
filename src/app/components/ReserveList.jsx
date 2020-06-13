@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { shamsiFromISoDate } from "../../utils/dateUtils";
-import reservationStatus from "../../utils/reservationStatus";
+import { shamsiFromISoDate } from "./../utils/dateUtils";
+import reservationStatus from "./../../utils/reservationStatus";
 import {
   deleteReservation,
   modifyReservationStatus,

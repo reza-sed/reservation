@@ -1,7 +1,7 @@
 import express from "express";
 import { connectDB } from "./../connect-db";
-import reservationStatus from "./../../utils/reservationStatus";
-import { MongoDate } from "./../../utils/dateUtils";
+import reservationStatus from "./../utils/reservationStatus";
+import { MongoDate } from "./../utils/dateUtils";
 import auth from "../middleware/auth";
 import Joi from "@hapi/joi";
 import winston from "winston";
@@ -52,7 +52,7 @@ export const updateReservation = async (reservation) => {
       { $set: { status, finalizedDate: new Date() } },
       (err, documents) => {
         return documents;
-      }
+      },
     );
   }
 

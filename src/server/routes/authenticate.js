@@ -1,5 +1,5 @@
 import express from "express";
-import { generateToken } from "../../utils/token";
+import { generateToken } from "./../utils/token";
 import { connectDB } from "./../connect-db";
 
 const router = express.Router();
@@ -31,10 +31,7 @@ router.post("/", async (req, res) => {
       .toArray();
   }
 
-  let rooms = await db
-    .collection("rooms")
-    .find()
-    .toArray();
+  let rooms = await db.collection("rooms").find().toArray();
 
   let state = {
     reservations,

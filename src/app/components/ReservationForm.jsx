@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { requestReservation } from "./../store/actions/reserveAction";
 import RoomSelect from "./RoomSelect";
 import { DateTimeRangePicker } from "react-advance-jalaali-datepicker";
-import { shamsiFromISoDate } from "../../utils/dateUtils";
+import { shamsiFromISoDate } from "./../utils/dateUtils";
 import { checkReservationDate } from "../service/reservationService";
 import { toast } from "react-toastify";
 import Joi from "@hapi/joi";
@@ -191,7 +191,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     newReserve(room, section, desc, startDateTime, endDateTime) {
       dispatch(
-        requestReservation(room, section, desc, startDateTime, endDateTime)
+        requestReservation(room, section, desc, startDateTime, endDateTime),
       );
     },
   };
