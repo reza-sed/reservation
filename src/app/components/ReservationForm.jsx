@@ -11,6 +11,7 @@ import produce from "immer";
 
 class ReservationForm extends Component {
   state = {
+    activeReservedList: [],
     data: {
       room: "",
       startDateTime: "",
@@ -94,6 +95,8 @@ class ReservationForm extends Component {
     ) {
       checkReservationDate(this.state.data.startDateTime, this.state.data.room)
         .then((res) => {
+          console.log(res);
+
           this.setState({ activeReservedList: res });
         })
         .catch((e) => {

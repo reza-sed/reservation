@@ -32,7 +32,7 @@ export function* reservationCreationSaga() {
     try {
       const res = yield addReservation({
         reservation: {
-          // id: id,
+          id: id,
           sectionName: sectionName,
           description: description,
           reserveFromDate: reserveFromDate,

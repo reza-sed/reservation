@@ -21,13 +21,6 @@ if (!config.get("jwttoken")) {
   process.exit(1);
 }
 
-if (process.env.NODE_ENV == "production") {
-  app.use(express.static("dist"));
-  app.get("/*", (req, res) => {
-    res.sendFile(path.resolve("index.html"));
-  });
-}
-
 let port = process.env.PORT || 7777;
 
 app.use(helmet());
@@ -35,6 +28,14 @@ app.use(compression());
 app.use(cors(), bodyParser.urlencoded({ extended: true }), bodyParser.json());
 app.use("/authenticate", authenticate);
 app.use("/reserve", reservations);
+
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static("dist"));
+  app.get("/*", (req, res) => {
+    res.sendFile(path.resolve("index.html"));
+  });
+}
+
 app.use(error);
 
 app.listen(port, winston.info(`server listening on port ${port}`));

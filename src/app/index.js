@@ -20,5 +20,5 @@ ReactDOM.render(
     />
     <Main />
   </React.Fragment>,
-  document.getElementById("app")
+  document.getElementById("app"),
 );
