@@ -16,6 +16,7 @@
     "start-dev": "concurrently \"npm run dev\" \"npm run server\"",
     "pm2-list": "pm2 list",
     "pm2-delete": "pm2 delete server",
+    "pm2-stop": "pm2 stop server",
     "pm2-restart": "pm2 restart server --update-env",
     "pm2-logs": "pm2 logs",
     "pm2-monit": "pm2 monit"

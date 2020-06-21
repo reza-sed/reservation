@@ -95,8 +95,6 @@ class ReservationForm extends Component {
     ) {
       checkReservationDate(this.state.data.startDateTime, this.state.data.room)
         .then((res) => {
-          console.log(res);
-
           this.setState({ activeReservedList: res });
         })
         .catch((e) => {

@@ -5,6 +5,6 @@
   "dbuser": "app_db_user",
   "dbpass": "app_db_pass",
   "client": {
-    "remoteApi": ""
+    "remoteApi": "http://172.16.0.171:9090"
   }
 }
