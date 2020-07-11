@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
       .collection("reservations")
       .find({
         isDeleted: false,
-        infPerId,
+        infPerId: parseInt(infPerId),
         reserveFromDate: { $gte: new Date() },
       })
       .toArray();
